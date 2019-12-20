@@ -14,22 +14,19 @@ function processValue(schema, value) {
   const { type, items } = schema;
   if (value === "") {
     return undefined;
-  } else if (type === "array" && items && nums.has(items.type)) {
+  }
+
+  // enum options are referenced by index not value to preserve correct type
+  if (schema.enum) {
+    return JSON.parse(value);
+  }
+
+  if (type === "array" && items && nums.has(items.type)) {
     return value.map(asNumber);
   } else if (type === "boolean") {
     return value === "true";
   } else if (type === "number") {
     return asNumber(value);
-  }
-
-  // If type is undefined, but an enum is present, try and infer the type from
-  // the enum values
-  if (schema.enum) {
-    if (schema.enum.every(x => guessType(x) === "number")) {
-      return asNumber(value);
-    } else if (schema.enum.every(x => guessType(x) === "boolean")) {
-      return value === "true";
-    }
   }
 
   return value;
@@ -69,7 +66,7 @@ function SelectWidget(props) {
       id={id}
       multiple={multiple}
       className="form-control"
-      value={typeof value === "undefined" ? emptyValue : value}
+      value={typeof value === "undefined" ? emptyValue : options.enumOptions ? JSON.stringify(value) : value}
       required={required}
       disabled={disabled || readonly}
       autoFocus={autofocus}
@@ -97,7 +94,8 @@ function SelectWidget(props) {
       {enumOptions.map(({ value, label }, i) => {
         const disabled = enumDisabled && enumDisabled.indexOf(value) != -1;
         return (
-          <option key={i} value={value} disabled={disabled}>
+          // perhaps referencing options by index would be even better
+          <option key={i} value={JSON.stringify(value)} disabled={disabled}>
             {label}
           </option>
         );
