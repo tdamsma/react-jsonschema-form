@@ -193,7 +193,7 @@ function WrapIfAdditional(props) {
   return (
     <div className={classNames}>
       <div className="row">
-        <div className="col-xs-5 form-additional">
+        <div className="col-xs-10 form-additional">
           <div className="form-group">
             <Label label={keyLabel} required={required} id={`${id}-key`} />
             <LabelInput
@@ -203,9 +203,6 @@ function WrapIfAdditional(props) {
               onChange={onKeyChange}
             />
           </div>
-        </div>
-        <div className="form-additional form-group col-xs-5">
-          {props.children}
         </div>
         <div className="col-xs-2">
           <IconButton
@@ -217,6 +214,9 @@ function WrapIfAdditional(props) {
             disabled={disabled || readonly}
             onClick={onDropPropertyClick(label)}
           />
+        </div>
+        <div className="form-additional form-group col-xs-offset-1 col-xs-11">
+          {props.children}
         </div>
       </div>
     </div>
